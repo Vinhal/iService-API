@@ -10,13 +10,13 @@ const middlewares = require('./utils/middleware')
 const app = express()
 
 let server = null
-const { APP_PORT } = process.env
+const { PORT } = process.env
 
 database.connect()
 middlewares.bootstrap(app)
 routes.apply(app)
 
-server = app.listen(APP_PORT || 3000)
+server = app.listen(PORT || 3001)
 
 middlewares.registerGreacefulStop(app)
 
