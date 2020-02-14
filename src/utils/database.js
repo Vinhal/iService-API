@@ -1,40 +1,25 @@
 "use strict"
 
 const mongoose = require('mongoose')
-const { MongoMemoryServer } = require('mongodb-memory-server')
 
-const mongod = new MongoMemoryServer()
+const { APP_MONGODB_URL } = process.env
 
-const connect = async () => {
-    const uri = await mongod.getConnectionString()
-
-    const mongooseOpts = {
-        useNewUrlParser: true,
-        autoReconnect: true,
-        reconnectTries: Number.MAX_VALUE,
-        reconnectInterval: 1000
-    }
-
-    await mongoose.connect(uri, mongooseOpts)
+let mongoConfig = {
+    useNewUrlParser: true
 }
 
-const closeDatabase = async () => {
-    await mongoose.connection.dropDatabase()
-    await mongoose.connection.close()
-    await mongod.stop()
+const connect = () => {
+
+    mongoose.connect(APP_MONGODB_URL, mongoConfig)
+
+    mongoose.set('useFindAndModify', false)
+    mongoose.set('useCreateIndex', true)
 }
 
-const clearDatabase = async () => {
-    const collections = mongoose.connection.collections
-
-    for (const key in collections) {
-        const collection = collections[String(key)]
-        await collection.deleteMany()
-    }
+const disconnect = () => {
+    mongoose.connection.close()
 }
 
 module.exports = {
-    connect,
-    closeDatabase,
-    clearDatabase
+    connect, disconnect
 }
