@@ -16,7 +16,7 @@ database.connect()
 middlewares.bootstrap(app)
 routes.apply(app)
 
-server = app.listen(APP_PORT)
+server = app.listen(APP_PORT || 3000)
 
 middlewares.registerGreacefulStop(app)
 
